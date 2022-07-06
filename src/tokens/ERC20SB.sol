@@ -46,19 +46,15 @@ abstract contract ERC20SB {
                                ERC20 LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function approve(address spender, uint256 amount) public virtual returns (bool) {
+    function approve() public virtual returns (bool) {
         revert SoulBoundRestriction();
     }
 
-    function transfer(address to, uint256 amount) public virtual returns (bool) {
+    function transfer() public virtual returns (bool) {
         revert SoulBoundRestriction();
     }
 
-    function transferFrom(
-        address from,
-        address to,
-        uint256 amount
-    ) public virtual returns (bool) {
+    function transferFrom() public virtual returns (bool) {
         revert SoulBoundRestriction();
     }
 
