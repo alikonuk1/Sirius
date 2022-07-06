@@ -2,7 +2,9 @@
   "name": "@alikonuk1/sirius",
   "version": "1.0.0",
   "description": "Modern, exotic, always up to date solidity smart contract library for wide use cases.",
-  "main": "index.js",
+  "files": [
+    "src/**/*.sol"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
