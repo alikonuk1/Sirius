@@ -19,9 +19,10 @@ npm install @alikonuk1/Sirius
 ## Contracts
 
 ```ml
-tokens
-├─ ERC20SB — "Soulbound ERC20 implementation"
-├─ ERC721SB — "Soulbound ERC721 implementation"
+src
+├─ tokens
+│  ├─ ERC20SB — "Soulbound ERC20 implementation"
+│  ├─ ERC721SB — "Soulbound ERC721 implementation"
 ```
 
 ## Safety
