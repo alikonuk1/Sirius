@@ -7,13 +7,13 @@
 To install with [**Foundry**](https://github.com/gakonst/foundry):
 
 ```sh
-forge install alikonuk1/Sirius
+forge install alikonuk/Sirius
 ```
 
 To install with [**Hardhat**](https://github.com/nomiclabs/hardhat) or [**Truffle**](https://github.com/trufflesuite/truffle):
 
 ```sh
-npm install @alikonuk1/Sirius
+npm install @alikonuk/Sirius
 ```
 
 ## Contracts
