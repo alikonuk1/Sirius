@@ -1,3 +1,6 @@
+[![npm downloads](https://img.shields.io/npm/dt/@alikonuk/sirius)](https://img.shields.io/npm/dt/@alikonuk/sirius)
+[![npm version](https://badge.fury.io/js/@alikonuk%2Fsirius.svg)](https://badge.fury.io/js/@alikonuk%2Fsirius)
+
 # Sirius
 
 **Modern** and **exotic**, **customized** solidity **smart contract** library for wide use cases.
