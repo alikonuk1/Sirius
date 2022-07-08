@@ -1,6 +1,6 @@
 {
   "name": "@alikonuk/sirius",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Modern, exotic, always up to date solidity smart contract library for wide use cases.",
   "files": [
     "src/**/*.sol"
