@@ -1,6 +1,6 @@
 # Sirius
 
-**Modern** and **exotic** solidity **smart contract** library for wide use cases.
+**Modern** and **exotic**, **customized** solidity **smart contract** library for wide use cases.
 
 ## Installation
 
@@ -23,6 +23,7 @@ src
 ├─ tokens
 │  ├─ ERC20SB — "Soulbound ERC20 implementation"
 │  ├─ ERC721SB — "Soulbound ERC721 implementation"
+│  ├─ ERC1155SB — "Soulbound ERC1155 implementation"
 ```
 
 ## Safety

@@ -43,7 +43,7 @@ abstract contract ERC20SB {
     }
 
     /*//////////////////////////////////////////////////////////////
-                               ERC20 LOGIC
+                               ERC20SB LOGIC
     //////////////////////////////////////////////////////////////*/
 
     function approve() public virtual returns (bool) {
