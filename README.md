@@ -26,6 +26,7 @@ src
 │  ├─ ERC20SB — "Soulbound ERC20 implementation"
 │  ├─ ERC721SB — "Soulbound ERC721 implementation"
 │  ├─ ERC1155SB — "Soulbound ERC1155 implementation"
+│  ├─ ERC721A - "Optimized for lower gas during batch mints"
 ```
 
 ## Safety
@@ -39,6 +40,7 @@ We **do not give any warranties** and **will not be liable for any loss** incurr
 These contracts were inspired by or directly modified from many sources, primarily:
 
 - [solmate](https://github.com/Rari-Capital/solmate)
+- [Chiru Labs](https://github.com/chiru-labs/ERC721A)
 - [OpenZeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts)
 
 ## Support
