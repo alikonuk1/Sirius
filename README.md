@@ -26,7 +26,7 @@ src
 │  ├─ ERC20SB — "Soulbound ERC20 implementation"
 │  ├─ ERC721SB — "Soulbound ERC721 implementation"
 │  ├─ ERC1155SB — "Soulbound ERC1155 implementation"
-│  ├─ ERC721A - "Optimized for lower gas during batch mints"
+│  ├─ ERC721A — "Azuki: Optimized for lower gas during batch mints"
 ```
 
 ## Safety
