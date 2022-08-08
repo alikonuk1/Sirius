@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0;
+pragma solidity ^0.8.13;
 
 abstract contract ERC721 {
     /*//////////////////////////////////////////////////////////////
@@ -227,94 +227,202 @@ abstract contract ERC721TokenReceiver {
         return ERC721TokenReceiver.onERC721Received.selector;
     }
 }
-
-abstract contract ERC721L is ERC721 {
-    struct UserInfo {
-        address user; // address of user role
-        uint64 expires; // unix timestamp, user expires
+abstract contract Context {
+    function _msgSender() internal view virtual returns (address) {
+        return msg.sender;
     }
 
-    mapping(uint256 => UserInfo) internal _users;
+    function _msgData() internal view virtual returns (bytes calldata) {
+        return msg.data;
+    }
+}
 
-    constructor(string memory name_, string memory symbol_)
-        ERC721(name_, symbol_)
-    {}
+abstract contract Ownable is Context {
+    address private _owner;
 
-    /// @notice set the user and expires of a NFT
-    /// @dev The zero address indicates there is no user
-    /// Throws if `tokenId` is not valid NFT
-    /// @param user  The new user of the NFT
-    /// @param expires  UNIX timestamp, The new user could use the NFT before expires
-    function setUser(
-        uint256 tokenId,
-        address user,
-        uint64 expires
-    ) public virtual override {
-        require(
-            _isApprovedOrOwner(msg.sender, tokenId),
-            "ERC721: transfer caller is not owner nor approved"
-        );
-        UserInfo storage info = _users[tokenId];
-        info.user = user;
-        info.expires = expires;
-        emit UpdateUser(tokenId, user, expires);
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+
+    /**
+     * @dev Initializes the contract setting the deployer as the initial owner.
+     */
+    constructor() {
+        _transferOwnership(_msgSender());
     }
 
-    /// @notice Get the user address of an NFT
-    /// @dev The zero address indicates that there is no user or the user is expired
-    /// @param tokenId The NFT to get the user address for
-    /// @return The user address for this NFT
-    function userOf(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (address)
-    {
-        if (uint256(_users[tokenId].expires) >= block.timestamp) {
-            return _users[tokenId].user;
-        } else {
-            return address(0);
+    /**
+     * @dev Throws if called by any account other than the owner.
+     */
+    modifier onlyOwner() {
+        _checkOwner();
+        _;
+    }
+
+    /**
+     * @dev Returns the address of the current owner.
+     */
+    function owner() public view virtual returns (address) {
+        return _owner;
+    }
+
+    /**
+     * @dev Throws if the sender is not the owner.
+     */
+    function _checkOwner() internal view virtual {
+        require(owner() == _msgSender(), "Ownable: caller is not the owner");
+    }
+
+    /**
+     * @dev Leaves the contract without owner. It will not be possible to call
+     * `onlyOwner` functions anymore. Can only be called by the current owner.
+     *
+     * NOTE: Renouncing ownership will leave the contract without an owner,
+     * thereby removing any functionality that is only available to the owner.
+     */
+    function renounceOwnership() public virtual onlyOwner {
+        _transferOwnership(address(0));
+    }
+
+    /**
+     * @dev Transfers ownership of the contract to a new account (`newOwner`).
+     * Can only be called by the current owner.
+     */
+    function transferOwnership(address newOwner) public virtual onlyOwner {
+        require(newOwner != address(0), "Ownable: new owner is the zero address");
+        _transferOwnership(newOwner);
+    }
+
+    /**
+     * @dev Transfers ownership of the contract to a new account (`newOwner`).
+     * Internal function without access restriction.
+     */
+    function _transferOwnership(address newOwner) internal virtual {
+        address oldOwner = _owner;
+        _owner = newOwner;
+        emit OwnershipTransferred(oldOwner, newOwner);
+    }
+}
+
+/// @author 0xArbiter
+
+contract ConditionBoundToken is ERC721, Ownable{
+
+    // Set up 721
+    constructor(string memory name_, string memory symbol_) ERC721("ConditionBoundToken", "CBT") {}
+    
+    /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
+    /*                  CONDITION BOUND TOKENS                    */
+    /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
+
+    // Custom CBT error for if users try to transfer
+    error TokenIsBound();
+
+    // Struct for binding aux info
+    /// @dev You can make the bool a bit if you want
+    struct bindingMetadata {
+        bool isConditionBound;
+        bytes31 aux;
+    }
+
+    // Mapping of token IDs to whether they are ConditionBound or not
+    mapping (uint256 => bindingMetadata) Bindings;
+
+    // Get aux bytes
+    function getTokenAux(uint256 tokenId_) view public returns(bytes31 tokenAux){
+        tokenAux = Bindings[tokenId_].aux;
+    }
+
+    // Set aux bytes
+    function getTokenAux(uint256 tokenId_, bytes31 tokenAux_) public returns(bool status){
+        Bindings[tokenId_].aux = tokenAux_;
+        status = true;
+    }
+
+    /// @notice Prevent ConditionBound transfers
+    function checkConditionBound(uint256 tokenId_) internal view {
+        
+        /** 
+            @dev Here is where you can add gamification conditions 
+            For example you can check the aux and that might store
+            time information which you compare against block timestamp.
+            Or you could use difficulty or something and have tokens that
+            become ConditionBound if the merge happens.
+         */
+
+         // Revert if token is ConditionBound
+        if (Bindings[tokenId_].isConditionBound){
+            revert TokenIsBound();
         }
     }
 
-    /// @notice Get the user expires of an NFT
-    /// @dev The zero value indicates that there is no user
-    /// @param tokenId The NFT to get the user expires for
-    /// @return The user expires for this NFT
-    function userExpires(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (uint256)
-    {
-        return _users[tokenId].expires;
-    }
-
-    /// @dev See {IERC165-supportsInterface}.
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override
-        returns (bool)
-    {
-        return
-            interfaceId == type(IERC4907).interfaceId ||
-            super.supportsInterface(interfaceId);
-    }
-
+    /// @notice Override OZ's _beforeTokenTransfer to prevent sending tokens if conditions aren't right
     function _beforeTokenTransfer(
         address from,
         address to,
         uint256 tokenId
-    ) internal virtual override {
-        super._beforeTokenTransfer(from, to, tokenId);
-
-        if (from != to && _users[tokenId].user != address(0)) {
-            delete _users[tokenId];
-            emit UpdateUser(tokenId, address(0), 0);
-        }
+    ) internal override {
+        checkConditionBound(tokenId);
     }
+
+    /// @notice Bind a token (only owner in this base)
+    function bindToken(uint256 tokenId_) external onlyOwner returns(bool status){
+        Bindings[tokenId_].isConditionBound = true;
+        status = true;
+    }
+
+    /// @notice Release binding of a token (only owner in this base)
+    function releaseToken(uint256 tokenId_) external onlyOwner returns(bool status){
+        Bindings[tokenId_].isConditionBound = false;
+        status = true;
+    }
+
+    /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
+    /*                    NORMAL TOKEN STUFF                      */
+    /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
+    
+    error MintIsOver();
+    error InsufficientEther();
+
+    uint256 public totalSupply = 0;
+    //uint256 constant MAX_SUPPLY = 10_000;
+    //uint256 constant MINT_PRICE = 0.0 ether;
+
+    string baseURI = "www.miladymaker.net/";
+
+    /// @notice Mint a token to the given address
+    function safeMint(address to) public payable {
+        // Check they paid enough
+        if(msg.value!=MINT_PRICE){
+            revert InsufficientEther();
+        }
+        // Check mint is not over
+        if(totalSupply+1>MAX_SUPPLY){
+            revert MintIsOver();
+        }
+        // Mint token
+        _safeMint(to, totalSupply);
+        ++totalSupply;
+    }
+
+    /// @notice Burn the given token
+    function burn(uint256 id) public payable {
+        _burn(id);
+        //--totalSupply; Don't do this in this case or it'll let you mint again
+    }
+
+    /// @notice Get baseURI
+    function _baseURI() internal view override returns (string memory) {
+        return baseURI;
+    }
+
+    /// @notice Changes baseURI
+    function changeBaseURI(string calldata baseURI_) external onlyOwner {
+        baseURI = baseURI_;
+    }
+
+
+
+
+   
+
+
 }

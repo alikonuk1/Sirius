@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-abstract contract ERC721 {
+abstract contract ERC721R {
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
@@ -19,6 +19,12 @@ abstract contract ERC721 {
     string public name;
 
     string public symbol;
+
+    uint256 public constant refundPeriod;
+
+    uint256 public refundEndTime;
+
+    address public refundAddress;
 
     function tokenURI(uint256 id) public view virtual returns (string memory);
 
@@ -40,6 +46,11 @@ abstract contract ERC721 {
         return _balanceOf[owner];
     }
 
+    modifier onlyOwner() {
+        require (msg.sender == ownerOf, "Unauthorized");
+        _;
+    }
+
     /*//////////////////////////////////////////////////////////////
                          ERC721 APPROVAL STORAGE
     //////////////////////////////////////////////////////////////*/
@@ -52,9 +63,12 @@ abstract contract ERC721 {
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(string memory _name, string memory _symbol) {
+    constructor(string memory _name, string memory _symbol, uint256 constant memory _refundPeriod) {
         name = _name;
         symbol = _symbol;
+        refundPeriod = _refundPeriod;
+        refundAddress = msg.sender;
+        toggleRefundCountdown();
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -215,8 +229,45 @@ abstract contract ERC721 {
     }
 }
 
+    /*//////////////////////////////////////////////////////////////
+                            REFUND LOGIC
+    //////////////////////////////////////////////////////////////*/
+
+    function refund(uint256[] calldata tokenIds) external {
+        require(isRefundGuaranteeActive(), "Refund expired");
+
+        for (uint256 i = 0; i < tokenIds.length; i++) {
+            uint256 tokenId = tokenIds[i];
+            require(msg.sender == ownerOf(tokenId), "Not token owner");
+            require(!hasRefunded[tokenId], "Already refunded");
+            hasRefunded[tokenId] = true;
+            transferFrom(msg.sender, refundAddress, tokenId);
+        }
+
+        uint256 refundAmount = tokenIds.length * mintPrice;
+        Address.sendValue(payable(msg.sender), refundAmount);
+    }
+
+    function toggleRefundCountdown() public onlyOwner {
+        refundEndTime = block.timestamp + refundPeriod;
+    }
+
+    function isRefundGuaranteeActive() public view returns (bool) {
+        return (block.timestamp <= refundEndTime);
+    }
+
+    function getRefundGuaranteeEndTime() public view returns (uint256) {
+        return refundEndTime;
+    }
+
+    function setRefundAddress(address _refundAddress) external onlyOwner {
+        refundAddress = _refundAddress;
+    }
+
+
+
 /// @notice A generic interface for a contract which properly accepts ERC721 tokens.
-/// @author Solmate (https://github.com/transmissions11/solmate/blob/main/src/tokens/ERC721.sol)
+/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC721.sol)
 abstract contract ERC721TokenReceiver {
     function onERC721Received(
         address,
@@ -225,96 +276,5 @@ abstract contract ERC721TokenReceiver {
         bytes calldata
     ) external virtual returns (bytes4) {
         return ERC721TokenReceiver.onERC721Received.selector;
-    }
-}
-
-abstract contract ERC721L is ERC721 {
-    struct UserInfo {
-        address user; // address of user role
-        uint64 expires; // unix timestamp, user expires
-    }
-
-    mapping(uint256 => UserInfo) internal _users;
-
-    constructor(string memory name_, string memory symbol_)
-        ERC721(name_, symbol_)
-    {}
-
-    /// @notice set the user and expires of a NFT
-    /// @dev The zero address indicates there is no user
-    /// Throws if `tokenId` is not valid NFT
-    /// @param user  The new user of the NFT
-    /// @param expires  UNIX timestamp, The new user could use the NFT before expires
-    function setUser(
-        uint256 tokenId,
-        address user,
-        uint64 expires
-    ) public virtual override {
-        require(
-            _isApprovedOrOwner(msg.sender, tokenId),
-            "ERC721: transfer caller is not owner nor approved"
-        );
-        UserInfo storage info = _users[tokenId];
-        info.user = user;
-        info.expires = expires;
-        emit UpdateUser(tokenId, user, expires);
-    }
-
-    /// @notice Get the user address of an NFT
-    /// @dev The zero address indicates that there is no user or the user is expired
-    /// @param tokenId The NFT to get the user address for
-    /// @return The user address for this NFT
-    function userOf(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (address)
-    {
-        if (uint256(_users[tokenId].expires) >= block.timestamp) {
-            return _users[tokenId].user;
-        } else {
-            return address(0);
-        }
-    }
-
-    /// @notice Get the user expires of an NFT
-    /// @dev The zero value indicates that there is no user
-    /// @param tokenId The NFT to get the user expires for
-    /// @return The user expires for this NFT
-    function userExpires(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (uint256)
-    {
-        return _users[tokenId].expires;
-    }
-
-    /// @dev See {IERC165-supportsInterface}.
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override
-        returns (bool)
-    {
-        return
-            interfaceId == type(IERC4907).interfaceId ||
-            super.supportsInterface(interfaceId);
-    }
-
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal virtual override {
-        super._beforeTokenTransfer(from, to, tokenId);
-
-        if (from != to && _users[tokenId].user != address(0)) {
-            delete _users[tokenId];
-            emit UpdateUser(tokenId, address(0), 0);
-        }
     }
 }

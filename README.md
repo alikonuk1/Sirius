@@ -26,6 +26,9 @@ src
 │  ├─ ERC20SB — "Soulbound ERC20 implementation"
 │  ├─ ERC721SB — "Soulbound ERC721 implementation"
 │  ├─ ERC1155SB — "Soulbound ERC1155 implementation"
+│  ├─ ERC721CB — "Conditionbound Token"
+│  ├─ ERC721R — "Refundable Nft sales"
+│  ├─ ERC721L — "Lendable ERC721 implementation"
 │  ├─ ERC721A — "Azuki: Optimized for lower gas during batch mints"
 ```
 
@@ -42,6 +45,8 @@ These contracts were inspired by or directly modified from many sources, primari
 - [solmate](https://github.com/Rari-Capital/solmate)
 - [Chiru Labs](https://github.com/chiru-labs/ERC721A)
 - [OpenZeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts)
+- [Exo Digital Labs](https://github.com/exo-digital-labs/ERC721R)
+- [The Arbiter](https://github.com/The-Arbiter/Condition-Bound-Tokens)
 
 ## Support
 
