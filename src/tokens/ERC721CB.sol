@@ -383,8 +383,8 @@ contract ConditionBoundToken is ERC721, Ownable{
     error InsufficientEther();
 
     uint256 public totalSupply = 0;
-    //uint256 constant MAX_SUPPLY = 10_000;
-    //uint256 constant MINT_PRICE = 0.0 ether;
+    uint256 constant MAX_SUPPLY = 10_000;
+    uint256 constant MINT_PRICE = 0.0 ether;
 
     string baseURI = "www.miladymaker.net/";
 
