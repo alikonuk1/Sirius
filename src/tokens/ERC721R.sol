@@ -20,11 +20,15 @@ abstract contract ERC721R {
 
     string public symbol;
 
-    uint256 public constant refundPeriod;
+    uint256 public refundPeriod;
 
     uint256 public refundEndTime;
 
     address public refundAddress;
+
+    uint256 public mintPrice;
+
+    uint256 public hasRefunded;
 
     function tokenURI(uint256 id) public view virtual returns (string memory);
 
@@ -63,7 +67,7 @@ abstract contract ERC721R {
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(string memory _name, string memory _symbol, uint256 constant memory _refundPeriod) {
+    constructor(string memory _name, string memory _symbol, uint256 _refundPeriod) {
         name = _name;
         symbol = _symbol;
         refundPeriod = _refundPeriod;
@@ -227,7 +231,6 @@ abstract contract ERC721R {
             "UNSAFE_RECIPIENT"
         );
     }
-}
 
     /*//////////////////////////////////////////////////////////////
                             REFUND LOGIC
@@ -245,7 +248,7 @@ abstract contract ERC721R {
         }
 
         uint256 refundAmount = tokenIds.length * mintPrice;
-        Address.sendValue(payable(msg.sender), refundAmount);
+        refundAddress.sendValue(payable(msg.sender), refundAmount);
     }
 
     function toggleRefundCountdown() public onlyOwner {
@@ -264,7 +267,7 @@ abstract contract ERC721R {
         refundAddress = _refundAddress;
     }
 
-
+}
 
 /// @notice A generic interface for a contract which properly accepts ERC721 tokens.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC721.sol)
