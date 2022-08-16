@@ -27,8 +27,8 @@ src
 │  ├─ ERC721SB — "Soulbound ERC721 implementation"
 │  ├─ ERC1155SB — "Soulbound ERC1155 implementation"
 │  ├─ ERC721CB — "Condition Bound Token"
-│  ├─ ERC721R — "Refundable Nft sales"
-│  ├─ ERC721L — "Lendable ERC721 implementation"
+│  ├─ ERC721R — "Refundable Nft sales" - to be added..
+│  ├─ ERC721L — "EIP-4907: Lendable ERC721 implementation"
 │  ├─ ERC721A — "Azuki: Optimized for lower gas during batch mints"
 ```
 
