@@ -304,7 +304,7 @@ abstract contract Ownable is Context {
 
 /// @author 0xArbiter
 
-contract ConditionBoundToken is ERC721, Ownable{
+abstract contract ConditionBoundToken is ERC721, Ownable{
 
     // Set up 721
     constructor(string memory name_, string memory symbol_) ERC721("ConditionBoundToken", "CBT") {}
@@ -359,7 +359,7 @@ contract ConditionBoundToken is ERC721, Ownable{
         address from,
         address to,
         uint256 tokenId
-    ) internal override {
+    ) internal {
         checkConditionBound(tokenId);
     }
 
@@ -410,7 +410,7 @@ contract ConditionBoundToken is ERC721, Ownable{
     }
 
     /// @notice Get baseURI
-    function _baseURI() internal view override returns (string memory) {
+    function _baseURI() internal view returns (string memory) {
         return baseURI;
     }
 
