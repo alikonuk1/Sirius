@@ -74,11 +74,7 @@ contract ERC20SBTest is DSTestPlus {
         assertEq(token.balanceOf(from), 1e18);
     }
 
-    function testMetadata(
-        string calldata name,
-        string calldata symbol,
-        uint8 decimals
-    ) public {
+    function testMetadata(string calldata name, string calldata symbol, uint8 decimals) public {
         MockERC20SB tkn = new MockERC20SB(name, symbol, decimals);
         assertEq(tkn.name(), name);
         assertEq(tkn.symbol(), symbol);
@@ -92,11 +88,7 @@ contract ERC20SBTest is DSTestPlus {
         assertEq(token.balanceOf(from), amount);
     }
 
-    function testBurn(
-        address from,
-        uint256 mintAmount,
-        uint256 burnAmount
-    ) public {
+    function testBurn(address from, uint256 mintAmount, uint256 burnAmount) public {
         burnAmount = bound(burnAmount, 0, mintAmount);
 
         token.mint(from, mintAmount);
@@ -106,11 +98,7 @@ contract ERC20SBTest is DSTestPlus {
         assertEq(token.balanceOf(from), mintAmount - burnAmount);
     }
 
-    function testFailBurnInsufficientBalance(
-        address to,
-        uint256 mintAmount,
-        uint256 burnAmount
-    ) public {
+    function testFailBurnInsufficientBalance(address to, uint256 mintAmount, uint256 burnAmount) public {
         burnAmount = bound(burnAmount, mintAmount + 1, type(uint256).max);
 
         token.mint(to, mintAmount);

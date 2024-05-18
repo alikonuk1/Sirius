@@ -77,18 +77,13 @@ abstract contract ERC721 {
         emit ApprovalForAll(msg.sender, operator, approved);
     }
 
-    function transferFrom(
-        address from,
-        address to,
-        uint256 id
-    ) public virtual {
+    function transferFrom(address from, address to, uint256 id) public virtual {
         require(from == _ownerOf[id], "WRONG_FROM");
 
         require(to != address(0), "INVALID_RECIPIENT");
 
         require(
-            msg.sender == from || isApprovedForAll[from][msg.sender] || msg.sender == getApproved[id],
-            "NOT_AUTHORIZED"
+            msg.sender == from || isApprovedForAll[from][msg.sender] || msg.sender == getApproved[id], "NOT_AUTHORIZED"
         );
 
         // Underflow of the sender's balance is impossible because we check for
@@ -106,33 +101,24 @@ abstract contract ERC721 {
         emit Transfer(from, to, id);
     }
 
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 id
-    ) public virtual {
+    function safeTransferFrom(address from, address to, uint256 id) public virtual {
         transferFrom(from, to, id);
 
         require(
-            to.code.length == 0 ||
-                ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, "") ==
-                ERC721TokenReceiver.onERC721Received.selector,
+            to.code.length == 0
+                || ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, "")
+                    == ERC721TokenReceiver.onERC721Received.selector,
             "UNSAFE_RECIPIENT"
         );
     }
 
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 id,
-        bytes calldata data
-    ) public virtual {
+    function safeTransferFrom(address from, address to, uint256 id, bytes calldata data) public virtual {
         transferFrom(from, to, id);
 
         require(
-            to.code.length == 0 ||
-                ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, data) ==
-                ERC721TokenReceiver.onERC721Received.selector,
+            to.code.length == 0
+                || ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, data)
+                    == ERC721TokenReceiver.onERC721Received.selector,
             "UNSAFE_RECIPIENT"
         );
     }
@@ -142,10 +128,9 @@ abstract contract ERC721 {
     //////////////////////////////////////////////////////////////*/
 
     function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
-        return
-            interfaceId == 0x01ffc9a7 || // ERC165 Interface ID for ERC165
-            interfaceId == 0x80ac58cd || // ERC165 Interface ID for ERC721
-            interfaceId == 0x5b5e139f; // ERC165 Interface ID for ERC721Metadata
+        return interfaceId == 0x01ffc9a7 // ERC165 Interface ID for ERC165
+            || interfaceId == 0x80ac58cd // ERC165 Interface ID for ERC721
+            || interfaceId == 0x5b5e139f; // ERC165 Interface ID for ERC721Metadata
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -192,24 +177,20 @@ abstract contract ERC721 {
         _mint(to, id);
 
         require(
-            to.code.length == 0 ||
-                ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, "") ==
-                ERC721TokenReceiver.onERC721Received.selector,
+            to.code.length == 0
+                || ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, "")
+                    == ERC721TokenReceiver.onERC721Received.selector,
             "UNSAFE_RECIPIENT"
         );
     }
 
-    function _safeMint(
-        address to,
-        uint256 id,
-        bytes memory data
-    ) internal virtual {
+    function _safeMint(address to, uint256 id, bytes memory data) internal virtual {
         _mint(to, id);
 
         require(
-            to.code.length == 0 ||
-                ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, data) ==
-                ERC721TokenReceiver.onERC721Received.selector,
+            to.code.length == 0
+                || ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, data)
+                    == ERC721TokenReceiver.onERC721Received.selector,
             "UNSAFE_RECIPIENT"
         );
     }
@@ -218,15 +199,11 @@ abstract contract ERC721 {
 /// @notice A generic interface for a contract which properly accepts ERC721 tokens.
 /// @author Solmate (https://github.com/transmissions11/solmate/blob/main/src/tokens/ERC721.sol)
 abstract contract ERC721TokenReceiver {
-    function onERC721Received(
-        address,
-        address,
-        uint256,
-        bytes calldata
-    ) external virtual returns (bytes4) {
+    function onERC721Received(address, address, uint256, bytes calldata) external virtual returns (bytes4) {
         return ERC721TokenReceiver.onERC721Received.selector;
     }
 }
+
 abstract contract Context {
     function _msgSender() internal view virtual returns (address) {
         return msg.sender;
@@ -304,11 +281,10 @@ abstract contract Ownable is Context {
 
 /// @author 0xArbiter
 
-abstract contract ConditionBoundToken is ERC721, Ownable{
-
+abstract contract ConditionBoundToken is ERC721, Ownable {
     // Set up 721
     constructor(string memory name_, string memory symbol_) ERC721("ConditionBoundToken", "CBT") {}
-    
+
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
     /*                  CONDITION BOUND TOKENS                    */
     /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
@@ -324,53 +300,48 @@ abstract contract ConditionBoundToken is ERC721, Ownable{
     }
 
     // Mapping of token IDs to whether they are ConditionBound or not
-    mapping (uint256 => bindingMetadata) Bindings;
+    mapping(uint256 => bindingMetadata) Bindings;
 
     // Get aux bytes
-    function getTokenAux(uint256 tokenId_) view public returns(bytes31 tokenAux){
+    function getTokenAux(uint256 tokenId_) public view returns (bytes31 tokenAux) {
         tokenAux = Bindings[tokenId_].aux;
     }
 
     // Set aux bytes
-    function getTokenAux(uint256 tokenId_, bytes31 tokenAux_) public returns(bool status){
+    function getTokenAux(uint256 tokenId_, bytes31 tokenAux_) public returns (bool status) {
         Bindings[tokenId_].aux = tokenAux_;
         status = true;
     }
 
     /// @notice Prevent ConditionBound transfers
     function checkConditionBound(uint256 tokenId_) internal view {
-        
-        /** 
-            @dev Here is where you can add gamification conditions 
-            For example you can check the aux and that might store
-            time information which you compare against block timestamp.
-            Or you could use difficulty or something and have tokens that
-            become ConditionBound if the merge happens.
+        /**
+         * @dev Here is where you can add gamification conditions 
+         *         For example you can check the aux and that might store
+         *         time information which you compare against block timestamp.
+         *         Or you could use difficulty or something and have tokens that
+         *         become ConditionBound if the merge happens.
          */
 
-         // Revert if token is ConditionBound
-        if (Bindings[tokenId_].isConditionBound){
+        // Revert if token is ConditionBound
+        if (Bindings[tokenId_].isConditionBound) {
             revert TokenIsBound();
         }
     }
 
     /// @notice Override OZ's _beforeTokenTransfer to prevent sending tokens if conditions aren't right
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal {
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal {
         checkConditionBound(tokenId);
     }
 
     /// @notice Bind a token (only owner in this base)
-    function bindToken(uint256 tokenId_) external onlyOwner returns(bool status){
+    function bindToken(uint256 tokenId_) external onlyOwner returns (bool status) {
         Bindings[tokenId_].isConditionBound = true;
         status = true;
     }
 
     /// @notice Release binding of a token (only owner in this base)
-    function releaseToken(uint256 tokenId_) external onlyOwner returns(bool status){
+    function releaseToken(uint256 tokenId_) external onlyOwner returns (bool status) {
         Bindings[tokenId_].isConditionBound = false;
         status = true;
     }
@@ -378,7 +349,7 @@ abstract contract ConditionBoundToken is ERC721, Ownable{
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
     /*                    NORMAL TOKEN STUFF                      */
     /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
-    
+
     error MintIsOver();
     error InsufficientEther();
 
@@ -391,11 +362,11 @@ abstract contract ConditionBoundToken is ERC721, Ownable{
     /// @notice Mint a token to the given address
     function safeMint(address to) public payable {
         // Check they paid enough
-        if(msg.value!=MINT_PRICE){
+        if (msg.value != MINT_PRICE) {
             revert InsufficientEther();
         }
         // Check mint is not over
-        if(totalSupply+1>MAX_SUPPLY){
+        if (totalSupply + 1 > MAX_SUPPLY) {
             revert MintIsOver();
         }
         // Mint token
@@ -418,11 +389,4 @@ abstract contract ConditionBoundToken is ERC721, Ownable{
     function changeBaseURI(string calldata baseURI_) external onlyOwner {
         baseURI = baseURI_;
     }
-
-
-
-
-   
-
-
 }
