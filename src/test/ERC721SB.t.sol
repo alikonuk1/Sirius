@@ -10,7 +10,7 @@
                                                            
 */
 
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
@@ -18,7 +18,7 @@ import {DSInvariantTest} from "./utils/DSInvariantTest.sol";
 
 import {MockERC721SB} from "./utils/mocks/MockERC721SB.sol";
 
-import {ERC721TokenReceiver} from "../tokens/ERC721SB.sol";
+import {ERC721TokenReceiver} from "../tokens/soulbound/ERC721SB.sol";
 
 contract ERC721Recipient is ERC721TokenReceiver {
     address public operator;
