@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-import {ERC1155SB} from "../../../tokens/soulbound/ERC1155SB.sol";
+import {ERC1155SB} from "../../../src/tokens/soulbound/ERC1155SB.sol";
 
 contract MockERC1155SB is ERC1155SB {
     function uri(uint256) public pure virtual override returns (string memory) {}
