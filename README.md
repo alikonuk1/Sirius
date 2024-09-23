@@ -26,10 +26,11 @@ src
 ├─ ├─ soulbound
 │  │  ├─ ERC20SB — "Soulbound ERC20 implementation"
 │  │  ├─ ERC721SB — "Soulbound ERC721 implementation"
-│  ├─ ERC1155SB — "Soulbound ERC1155 implementation"
-│  ├─ ERC721CB — "Condition Bound Token"
-│  ├─ ERC721R — "Refundable Nft sales" - to be added..
+│  │  ├─ ERC1155SB — "Soulbound ERC1155 implementation"
+│  ├─ ERC721CB — "Condition Bound ERC721 implementation"
 │  ├─ ERC721L — "EIP-4907: Lendable ERC721 implementation"
+├─ utility
+│  ├─ SelfMulticall — "SelfMulticall extension"
 ```
 
 ## Safety
