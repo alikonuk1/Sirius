@@ -23,13 +23,14 @@ npm install @alikonuk1/Sirius
 ```ml
 src
 ├─ tokens
-│  ├─ ERC20SB — "Soulbound ERC20 implementation"
-│  ├─ ERC721SB — "Soulbound ERC721 implementation"
-│  ├─ ERC1155SB — "Soulbound ERC1155 implementation"
-│  ├─ ERC721CB — "Condition Bound Token"
-│  ├─ ERC721R — "Refundable Nft sales" - to be added..
+├─ ├─ soulbound
+│  │  ├─ ERC20SB — "Soulbound ERC20 implementation"
+│  │  ├─ ERC721SB — "Soulbound ERC721 implementation"
+│  │  ├─ ERC1155SB — "Soulbound ERC1155 implementation"
+│  ├─ ERC721CB — "Condition Bound ERC721 implementation"
 │  ├─ ERC721L — "EIP-4907: Lendable ERC721 implementation"
-│  ├─ ERC721A — "Azuki: Optimized for lower gas during batch mints"
+├─ utility
+│  ├─ SelfMulticall — "SelfMulticall extension"
 ```
 
 ## Safety
@@ -50,6 +51,6 @@ These contracts were inspired by or directly modified from many sources, primari
 
 ## Support
 
-If you want to support this; 
+If you want to support this project, you can donate to the following addresses:
 
 ETH: 0xd6634f05BC79c19cD7027636F3c7c29E853EB844
